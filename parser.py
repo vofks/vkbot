@@ -7,8 +7,8 @@ import re
 def parse(html):
     a = html.find('бакалавров')
     if a != -1:
-        date_begin = html.find('(', a)
-        date_end = html.find(')', date_begin) + 1
+        date_begin = html.find('(', a) +1
+        date_end = html.find(')', date_begin)
         href = html.find('href', a)
         link_begin = html.find('"', href) + 1
         link_end = html.find('"', link_begin)
@@ -34,9 +34,10 @@ def get_html():
 
 html = get_html()
 date, link = parse(html)
-db = connect.DB()
-if db.update_link(date, link):
-    vk.send_to_all(link + " от " + date)
+print(date,link)
+#db = connect.DB()
+#if db.update_link(date, link):
+#    vk.send_to_all(link + " от " + date)
 
 
 

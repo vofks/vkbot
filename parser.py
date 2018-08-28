@@ -35,9 +35,9 @@ def get_html():
 html = get_html()
 date, link = parse(html)
 print(date,link)
-#db = connect.DB()
-#if db.update_link(date, link):
-#    vk.send_to_all(link + " от " + date)
+db = connect.DB()
+if db.update_link(date, link):
+    vk.send_to_all(link + " от " + date)
 
 
 

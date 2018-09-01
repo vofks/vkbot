@@ -32,8 +32,18 @@ class DB:
             self.cursor.execute(req)
             return True
 
+    def has_user_with_id(self,user_id):
+        req = 'SELECT * from `users`';
+        self.cursor.execute(req)
+        a = self.cursor.fetchone()
+        return a is not None
+
+
+    def check_last_msg(self,user_id,last_msg):
+        pass
+
 
 if __name__ == '__main__':
     db = DB()
-    # print(db.updateLastEdit("link","date"))
+    # print(db.updateLastEdit("link","date"))пальцевые жесты
 

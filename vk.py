@@ -4,6 +4,7 @@ import top_secret
 from math import ceil
 import json
 
+
 admin_id = 59544463
 send_url = "https://api.vk.com/method/messages.send"
 token = top_secret.token
@@ -75,9 +76,9 @@ def get_users():
     url += urllib.parse.urlencode(param)
     resp = urllib.request.urlopen(url)
     js = json.loads(resp.fp.read(resp.length).decode("utf-8"))
-    users = js['response']['items']
+    dialogs = js['response']['items']
     list_of_users = []
-    for i in users:
+    for i in dialogs:
         check_url = 'https://api.vk.com/method/messages.isMessagesFromGroupAllowed?'
         check_param = {
             'group_id': 152709221,
@@ -91,9 +92,12 @@ def get_users():
         is_allowed = check_js['response']['is_allowed']
         if is_allowed == 1:
             list_of_users.append(str(i['user_id']))
+            print("+")
+        else:
+            print("-")
 
     return list_of_users
 
 
 if __name__ == "__main__":
-    send_to_many(str(admin_id),"123")
+    get_users()

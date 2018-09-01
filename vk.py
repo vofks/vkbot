@@ -4,22 +4,32 @@ import top_secret
 from math import ceil
 import json
 
+import inspect
+
 
 admin_id = 59544463
 send_url = "https://api.vk.com/method/messages.send"
 token = top_secret.token
 version = "5.0"
-hello_msg = "Ты будешь получать прямые ссылки на расписание, когда оно будет меняться(но это не точно)"
+hello_msg = """get link  - получить последнюю ссылку
+"""
 
+
+
+def debug(f):
+    def g(*args,**kwargs):
+        print(args,kwargs)
+    return g if top_secret.debug else f
+
+
+def create_url(**param):
+    param['access_token'] = token
+    param['v'] = version
+    url = "?" + urllib.parse.urlencode(param)
+    return url
 
 def send_to_one(user_id, message):
-    param = {
-        'user_id': user_id,
-        'message': message,
-        'access_token': token,
-        'v': version
-    }
-    url = send_url + '?' + urllib.parse.urlencode(param)
+    url = send_url + create_url(user_id=user_id,message=message)
     resp = urllib.request.urlopen(url)
 
 
@@ -34,15 +44,9 @@ def send_to_admin(message):
 def send_to_admin2(message):
     send_to_one(108186884, message)
 
-
+@debug
 def send_to_many(user_ids, message):
-    param = {
-        'user_ids': user_ids,
-        'message': message,
-        'access_token': token,
-        'v': version
-    }
-    url = send_url + '?' + urllib.parse.urlencode(param)
+    url = send_url + create_url(user_ids=user_ids,message=message)
     resp = urllib.request.urlopen(url)
 
 
@@ -65,39 +69,44 @@ def get_users_by_parts(N):
         result.append(join_part(part))
     return result
 
-
-def get_users():
-    url = 'https://api.vk.com/method/messages.getDialogs?'
-    param = {
-        'access_token': token,
-        'v': version,
-        'count': 200
-    }
-    url += urllib.parse.urlencode(param)
+def get_last_msg(user_id):
+    url = 'https://api.vk.com/method/messages.getHistory' + create_url(user_id=user_id,count=1)
     resp = urllib.request.urlopen(url)
     js = json.loads(resp.fp.read(resp.length).decode("utf-8"))
-    dialogs = js['response']['items']
+    msg_obj = js['response']['items'][0]
+    return msg_obj
+
+def get_id_by_msg(msg):
+    return msg["from_id"] if msg["out"]==0 else msg["peer_id"]
+
+def get_users():
+    messages = get_last_messages()
     list_of_users = []
-    for i in dialogs:
-        check_url = 'https://api.vk.com/method/messages.isMessagesFromGroupAllowed?'
-        check_param = {
-            'group_id': 152709221,
-            'user_id': i['user_id'],
-            'access_token': token,
-            'v': version
-        }
-        check_url += urllib.parse.urlencode(check_param)
+    for msg in messages:
+        user_id = get_id_by_msg(msg)
+        check_url = 'https://api.vk.com/method/messages.isMessagesFromGroupAllowed' + create_url(user_id=user_id, group_id=152709221)
         check_resp = urllib.request.urlopen(check_url)
         check_js = json.loads(check_resp.fp.read(check_resp.length).decode("utf-8"))
         is_allowed = check_js['response']['is_allowed']
         if is_allowed == 1:
-            list_of_users.append(str(i['user_id']))
-            print("+")
-        else:
-            print("-")
-
+            list_of_users.append(str(user_id))
     return list_of_users
 
+def get_last_messages():
+    count = 10**10
+    offset = 0
+    dof = 150 # по сколько сообщений за раз. максимум 200(но лучше 199)
+    list_of_messages = []
+    while offset<count:
+        url = 'https://api.vk.com/method/messages.getConversations' + create_url(offset=offset,count=dof)
+        resp = urllib.request.urlopen(url)
+        js = json.loads(resp.fp.read(resp.length).decode("utf-8"))
+        count = js["response"]["count"]
+        dialogs = js['response']['items']
+        for i in dialogs:
+            list_of_messages.append(i["last_message"])
+        offset+=dof
+    return list_of_messages
 
 if __name__ == "__main__":
-    get_users()
+    print()

@@ -43,6 +43,7 @@ class DB:
         """
         True, если дата последнего сообщения изменилась, иначе False
         если юзера с таким id нет, то он создается
+        обнавляет дату
         """
         if self.has_user_with_id(user_id):
             req = "SELECT * from `users` where `id`=%d  and date_add(`last_msg`,interval 1 second)<'%s';"  % (user_id,last_msg);
@@ -56,6 +57,22 @@ class DB:
             req = "insert into `users` (`id`,`last_msg`) values (%d,'%s')" % (user_id,last_msg)
             self.cursor.execute(req)
             return True
+
+    def push_action(self,user_id,action):
+        req = "insert into `actions` (`user_id`,`action`) values (%d, '%s')" % (user_id, action)
+        self.cursor.execute(req)
+
+    def pop_action(self):
+        req = "select * from `actions`;";
+        self.cursor.execute(req)
+        result = self.cursor.fetchone()
+        if result is None:
+            return None,None
+        req = "delete from `actions` where `user_id`='%s' and `action`='%s'" % (result[0],result[1])
+        self.cursor.execute(req)
+        return result
+
+
 
 if __name__ == '__main__':
     db = DB()

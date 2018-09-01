@@ -41,11 +41,11 @@ class DB:
 
     def check_last_msg(self,user_id,last_msg):
         """
-        True, если последнее сообщение изменилось
+        True, если дата последнего сообщения изменилась, иначе False
         если юзера с таким id нет, то он создается
         """
         if self.has_user_with_id(user_id):
-            req = "SELECT * from `users` where `id`=%d  and date(`last_msg`)<'%s';"  % (user_id,last_msg);
+            req = "SELECT * from `users` where `id`=%d  and date_add(`last_msg`,interval 1 second)<'%s';"  % (user_id,last_msg);
             self.cursor.execute(req)
             a = self.cursor.fetchone()
             if a is not None:

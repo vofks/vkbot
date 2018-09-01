@@ -1,10 +1,11 @@
 import vk
 import connect
 from  datetime import  datetime
-
+import time
 
 def handle(user_id, msg):
     db = connect.DB()
+    msg = msg.lower();
     if "get link" in msg:
         db.push_action(user_id,"get link")
     else:
@@ -12,6 +13,7 @@ def handle(user_id, msg):
 
 
 while True:
+    time.sleep(3)
     last_messages = vk.get_last_messages()
     db = connect.DB()
     for msg_obj in last_messages:

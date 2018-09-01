@@ -4,7 +4,8 @@ import vk
 while True:
     db = connect.DB()
     user_id,action = db.pop_action()
-    print(user_id,action)
+    if user_id and action:
+        print(user_id,action)
     if action=="help":
         vk.send_hello(user_id)
     if action=="get link":

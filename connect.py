@@ -33,17 +33,30 @@ class DB:
             return True
 
     def has_user_with_id(self,user_id):
-        req = 'SELECT * from `users`';
+        req = 'SELECT * from `users` where id='+str(user_id)+";";
         self.cursor.execute(req)
         a = self.cursor.fetchone()
         return a is not None
 
 
     def check_last_msg(self,user_id,last_msg):
-        pass
-
+        """
+        True, если последнее сообщение изменилось
+        если юзера с таким id нет, то он создается
+        """
+        if self.has_user_with_id(user_id):
+            req = "SELECT * from `users` where `id`=%d  and date(`last_msg`)<'%s';"  % (user_id,last_msg);
+            self.cursor.execute(req)
+            a = self.cursor.fetchone()
+            if a is not None:
+                req = "update `users` set `last_msg`='%s' where `id`=%d" % (last_msg, user_id)
+                self.cursor.execute(req)
+            return a is not None
+        else:
+            req = "insert into `users` (`id`,`last_msg`) values (%d,'%s')" % (user_id,last_msg)
+            self.cursor.execute(req)
+            return True
 
 if __name__ == '__main__':
     db = DB()
-    # print(db.updateLastEdit("link","date"))пальцевые жесты
-
+    print(db.check_last_msg(3,'2018-09-01 15:40:08'))

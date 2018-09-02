@@ -39,6 +39,11 @@ class DB:
         return a is not None
 
 
+    def get_link_and_date_str(self):
+        date, link = self.get_current_link_and_date()
+        return link+" от "+date
+
+
     def check_last_msg(self,user_id,last_msg):
         """
         True, если дата последнего сообщения изменилась, иначе False

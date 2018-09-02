@@ -1,7 +1,7 @@
 import connect
 import vk
 
-while True:
+for i in range(100):
     db = connect.DB()
     user_id,action = db.pop_action()
     if user_id and action:
@@ -9,5 +9,4 @@ while True:
     if action=="help":
         vk.send_hello(user_id)
     if action=="get link":
-        date,link = db.get_current_link_and_date()
-        vk.send_to_one(user_id,link+" от "+date)
+        vk.send_to_one(user_id,db.get_link_and_date_str())

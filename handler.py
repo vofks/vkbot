@@ -1,6 +1,7 @@
 import connect
 import vk
 import datetime
+import time
 from math import floor
 
 def get_week():
@@ -10,7 +11,8 @@ def get_week():
     return "верхняя" if weeks_delta%2==1 else "нижняя"
 
 
-for i in range(100):
+for i in range(18):
+    time.sleep(3)
     db = connect.DB()
     user_id,action = db.pop_action()
     if user_id and action:

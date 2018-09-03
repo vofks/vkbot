@@ -6,12 +6,12 @@ import json
 
 import inspect
 
-
 admin_id = 59544463
 send_url = "https://api.vk.com/method/messages.send"
 token = top_secret.token
 version = "5.0"
 hello_msg = """get link  - получить последнюю ссылку
+get week - верхняя или нижняя неделя
 """
 
 
@@ -109,4 +109,4 @@ def get_last_messages():
     return list_of_messages
 
 if __name__ == "__main__":
-    print()
+    send_to_all("теперь можно командой ссылку получить. по крайней мере я на это надеюсь")

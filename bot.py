@@ -9,6 +9,8 @@ def handle(user_id, msg):
     print(user_id,msg)
     if "get link" in msg:
         db.push_action(user_id,"get link")
+    elif "get week":
+        db.push_action(user_id,"get week")
     else:
         db.push_action(user_id,"help")
 

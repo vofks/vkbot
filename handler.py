@@ -1,5 +1,14 @@
 import connect
 import vk
+import datetime
+from math import floor
+
+def get_week():
+    first_monday = datetime.date(2018,9,3)
+    today = datetime.date.today()
+    weeks_delta = (today - first_monday).days//7
+    return "верхняя" if weeks_delta%2==1 else "нижняя"
+
 
 for i in range(100):
     db = connect.DB()
@@ -10,3 +19,6 @@ for i in range(100):
         vk.send_hello(user_id)
     if action=="get link":
         vk.send_to_one(user_id,db.get_link_and_date_str())
+    if action=="get week":
+        vk.send_to_one(user_id,get_week())
+

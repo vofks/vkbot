@@ -163,7 +163,7 @@ def get_schedule_for_all(file):
 
 
 def get_beautiful_schedule_for_group(group,sub_group,is_up_week,schedule):
-    is_up_week = int(is_up_week)
+    is_up_week = int(not is_up_week)
     schedule = schedule[group][sub_group-1]
     res = ""
     for day in schedule:
@@ -173,6 +173,7 @@ def get_beautiful_schedule_for_group(group,sub_group,is_up_week,schedule):
     return res
 
 
+
 if __name__ == "__main__":
     sh = get_schedule_for_all("raspisanie_bakalavry-6.xls")
-    print(get_beautiful_schedule_for_group("381706-2",2,False,sh))
+    print(get_beautiful_schedule_for_group("381802",1,True,sh))

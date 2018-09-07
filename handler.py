@@ -11,8 +11,8 @@ def get_week():
     return "верхняя" if weeks_delta%2==1 else "нижняя"
 
 
-for i in range(18):
-    time.sleep(3)
+for i in range(52):
+    time.sleep(1)
     db = connect.DB()
     user_id,action = db.pop_action()
     if user_id and action:

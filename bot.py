@@ -16,7 +16,7 @@ def handle(user_id, msg):
 
 
 
-for i in range(18):
+for i in range(15):
     time.sleep(3)
     last_messages = vk.get_last_messages()
     db = connect.DB()

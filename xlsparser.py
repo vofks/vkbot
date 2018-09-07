@@ -129,8 +129,7 @@ def get_times(sheet): #["ПН"][<пара>-1][<true, если верхняя н�
         is_up_week = not is_up_week
     return  times
 
-def get_schedule_for_group(book,sheet,hidden_cols,times,groups_blocks,group,sub_group):
-    group_col=get_group_cols(group,groups_blocks)[sub_group-1]
+def get_schedule_for_group(book,sheet,hidden_cols,times,groups_blocks,group_col):
     week_days = ["ПН","ВТ","СР","ЧТ","ПТ","СБ"]
     schedule = deepcopy(times)
     for day in week_days:
@@ -158,9 +157,12 @@ def get_schedule_for_all(file):
     times = get_times(sheet)
     schedule = {}
     for group in gb:
-         schedule[group] = get_schedule_for_group(rb,sheet,hidden_cols,times,gb,group,1)
+        group_cols = get_group_cols(group, gb)
+        schedule[group] = [get_schedule_for_group(rb,sheet,hidden_cols,times,gb,sub_group_col) for sub_group_col in group_cols]
     return schedule
 
 
 if __name__ == "__main__":
-    print(get_schedule_for_all("raspisanie_bakalavry-6.xls"))
+    sh = get_schedule_for_all("raspisanie_bakalavry-6.xls")
+    print(sh["381706-2"][1]["ПН"][1][0]) #слева на право  группа 381706-2, подгруппа вторая, понедельник, вторая пара, верхняя неделя
+    print(sh["381804"][0]["ПТ"][2][1]) #слева на право  группа 381804, подгруппа первая, пятница, третья пара, нижняя неделя

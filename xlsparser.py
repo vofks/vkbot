@@ -162,7 +162,17 @@ def get_schedule_for_all(file):
     return schedule
 
 
+def get_beautiful_schedule_for_group(group,sub_group,is_up_week,schedule):
+    is_up_week = int(is_up_week)
+    schedule = schedule[group][sub_group-1]
+    res = ""
+    for day in schedule:
+        res += day +"\n"
+        for pair in range(len(schedule[day])):
+            res += "  пара №%d : %s" %(pair+1,schedule[day][pair][is_up_week]) + "\n"
+    return res
+
+
 if __name__ == "__main__":
     sh = get_schedule_for_all("raspisanie_bakalavry-6.xls")
-    print(sh["381706-2"][1]["ПН"][1][0]) #слева на право  группа 381706-2, подгруппа вторая, понедельник, вторая пара, верхняя неделя
-    print(sh["381804"][0]["ПТ"][2][1]) #слева на право  группа 381804, подгруппа первая, пятница, третья пара, нижняя неделя
+    print(get_beautiful_schedule_for_group("381706-2",2,False,sh))

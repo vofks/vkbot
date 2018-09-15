@@ -1,5 +1,6 @@
 import xlrd
 from copy import deepcopy
+import pickle
 
 def explore_block(book, sheet, hidden_cols, cell_row, cell_col, visited=None):
     if visited is None:
@@ -91,6 +92,20 @@ def get_group_cols(group,groups_blocks):
             max = cell[1]
     return tuple(i for i in range(min,max+1))
 
+
+def get_fizra_blocks(book, sheet):
+    blocks = set()
+    nrows = sheet.nrows
+    ncols = sheet.ncols
+    for col in range(ncols):
+        for row in range(nrows):
+            cell = sheet.cell(row,col)
+            if "ФИЗИЧЕСКАЯ КУЛЬТУРА" in str(cell.value):
+                blocks = blocks.union(explore_block(book,sheet,[],row,col))
+    return blocks
+
+
+
 def print_block(sheet,block):
     for cell_coords in block:
         cell = sheet.cell(cell_coords[0], cell_coords[1])
@@ -129,14 +144,17 @@ def get_times(sheet): #["ПН"][<пара>-1][<true, если верхняя н�
         is_up_week = not is_up_week
     return  times
 
-def get_schedule_for_group(book,sheet,hidden_cols,times,groups_blocks,group_col):
+def get_schedule_for_group(book,sheet,hidden_cols,times,group_col,fizra_blocks):
     week_days = ["ПН","ВТ","СР","ЧТ","ПТ","СБ"]
     schedule = deepcopy(times)
     for day in week_days:
         for pair in range(8):
             up_row = times[day][pair][True]
             down_row = times[day][pair][False]
-            schedule[day][pair] = (block_to_pair(sheet,explore_block(book,sheet,hidden_cols,up_row,group_col)) ,
+            if (up_row,group_col) in fizra_blocks:
+                schedule[day][pair] = (["Физра"],["Физра"])
+            else:
+                schedule[day][pair] = (block_to_pair(sheet,explore_block(book,sheet,hidden_cols,up_row,group_col)) ,
                                    block_to_pair(sheet,explore_block(book, sheet, hidden_cols, down_row, group_col)) )
     return schedule
 
@@ -152,13 +170,14 @@ def get_hidden_cols(sheet):
 def get_schedule_for_all(file):
     rb = xlrd.open_workbook(file, formatting_info=True)
     sheet = rb.sheet_by_index(0)
+    fizra_blocks = get_fizra_blocks(rb,sheet)
     hidden_cols = get_hidden_cols(sheet)
     gb = get_groups_blocks(rb,sheet,hidden_cols)
     times = get_times(sheet)
     schedule = {}
     for group in gb:
         group_cols = get_group_cols(group, gb)
-        schedule[group] = [get_schedule_for_group(rb,sheet,hidden_cols,times,gb,sub_group_col) for sub_group_col in group_cols]
+        schedule[group] = [get_schedule_for_group(rb,sheet,hidden_cols,times,sub_group_col,fizra_blocks) for sub_group_col in group_cols]
     return schedule
 
 
@@ -169,11 +188,32 @@ def get_beautiful_schedule_for_group(group,sub_group,is_up_week,schedule):
     for day in schedule:
         res += day +"\n"
         for pair in range(len(schedule[day])):
-            res += "  пара №%d : %s" %(pair+1,schedule[day][pair][is_up_week]) + "\n"
+            res += " %d : %s" %(pair+1,schedule[day][pair][is_up_week]) + "\n"
     return res
 
+def save(file,schedule):
+    f = open(file,"wb")
+    pickle.dump(schedule,f)
+    f.close()
 
+def load(file):
+    f = open(file,"rb")
+    res = pickle.load(f)
+    f.close()
+    return res
+
+def get_beautiful_loaded_schedule_for_day(group,sub_group,week,day):
+    schedule = load("1.sch")
+    is_up_week = int(week == "down")
+    schedule = schedule[group][sub_group - 1]
+    res = ""
+    res += day +" "+ group+"/"+str(sub_group)+" "+week+ "\n"
+    for pair in range(len(schedule[day])):
+        res += " %d : %s" % (pair + 1, schedule[day][pair][is_up_week]) + "\n"
+    return  res
 
 if __name__ == "__main__":
-    sh = get_schedule_for_all("raspisanie_bakalavry-6.xls")
-    print(get_beautiful_schedule_for_group("381802",1,True,sh))
+    sh = get_schedule_for_all("raspisanie_bakalavry-11.xls")
+    #save("11.sch",sh)
+    #sh = load("11.sch")
+    print(get_beautiful_schedule_for_group("381804",1,True,sh))

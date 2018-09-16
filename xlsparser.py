@@ -216,4 +216,4 @@ if __name__ == "__main__":
     sh = get_schedule_for_all("raspisanie_bakalavry-11.xls")
     #save("11.sch",sh)
     #sh = load("11.sch")
-    print(get_beautiful_schedule_for_group("381804",1,True,sh))
+    print(get_beautiful_schedule_for_group("381706-2",2,True,sh))

@@ -4,9 +4,9 @@ import top_secret
 from math import ceil
 import json
 
-import inspect
 
 admin_id = 59544463
+group_id = 152709221
 send_url = "https://api.vk.com/method/messages.send"
 token = top_secret.token
 version = "5.0"
@@ -107,6 +107,20 @@ def get_last_messages():
             list_of_messages.append(i["last_message"])
         offset+=dof
     return list_of_messages
+
+
+def get_long_poll_server():
+    url = 'https://api.vk.com/method/groups.getLongPollServer' + create_url(lp_version=3,group_id=group_id)
+    resp = urllib.request.urlopen(url)
+    js = json.loads(resp.fp.read(resp.length).decode("utf-8"))
+    return js['response']
+
+def get_new_messages(server):
+    url = str(server['server']) + create_url(act='a_check',key=server['key'],ts=server['ts'],wait=25)
+    resp = urllib.request.urlopen(url)
+    js = json.loads(resp.fp.read(resp.length).decode("utf-8"))
+    server['ts'] = js['ts']
+    return js
 
 if __name__ == "__main__":
     send_to_all("теперь можно командой узнать какая неделя. по крайней мере я на это надеюсь")

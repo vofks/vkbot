@@ -3,18 +3,32 @@ import connect
 import datetime
 import time
 import json
+import re
 
-def handle(user_id, msg):
-    db = connect.DB()
-    msg = msg.lower();
-    print(user_id,msg)
-    if "get link" in msg:
-        db.push_action(user_id,"get link")
-    elif "get week" in msg:
-        db.push_action(user_id,"get week")
-    else:
-        db.push_action(user_id,"help")
+class Handler:
+    def __init__(self):
+        self.actions = []
 
+    def add_action(self,reg_exp, func):
+        self.actions.append((reg_exp,func))
+
+    def handle(self, user_id, msg):
+        db = connect.DB()
+        msg = msg.lower()
+        print(user_id, msg)
+        for reg_exp,func in self.actions:
+            match = re.fullmatch(reg_exp,msg)
+            if match:
+                db.push_action(user_id,func(reg_exp))
+                break
+        else:
+            db.push_action(user_id, "help")
+
+
+handler = Handler()
+handler.add_action(r"get link",lambda x:"get link")
+handler.add_action(r"get week",lambda x:"get week")
+handler.add_action(r"get json",lambda x:"get json")
 
 server = vk.get_long_poll_server()
 while True:
@@ -28,4 +42,4 @@ while True:
     last_messages = events['updates']
     for msg_obj in last_messages:
         user_id = msg_obj['object']['user_id']
-        handle(user_id, msg_obj['object']['body'])
+        handler.handle(user_id, msg_obj['object']['body'])

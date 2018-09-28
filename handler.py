@@ -38,7 +38,6 @@ handler = Handler()
 handler.add_action("help",action_help)
 handler.add_action("get week", action_get_week)
 handler.add_action("get link", action_get_link)
-handler.add_action("get json", action_get_json)
 
 while True:
     time.sleep(0.1)

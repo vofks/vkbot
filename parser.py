@@ -23,7 +23,7 @@ def parse(html):
 
 
 def get_html():
-    url = 'http://www.itmm.unn.ru/studentam/raspisanie/'
+    url = 'http://www.itmm.unn.ru/studentam/raspisanie/raspisanie-bakalavriata-i-spetsialiteta-ochnoj-formy-obucheniya/'
     resp = urllib.request.urlopen(url)
     if resp.code == 200:
         html = resp.fp.read(resp.length).decode("utf-8")

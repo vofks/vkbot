@@ -34,12 +34,6 @@ def action_get_week(user_id):
     week = "верхняя" if get_week() else "нижняя"
     vk.send_to_one(user_id, week)
 
-def action_get_json(user_id):
-    import xlsparser
-    sch = xlsparser.load("11.sch")
-    print(sch["381706-2"][1])
-    vk.send_to_one(user_id,sch["381706-2"][1]["ПН"])
-
 handler = Handler()
 handler.add_action("help",action_help)
 handler.add_action("get week", action_get_week)

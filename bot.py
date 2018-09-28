@@ -28,7 +28,6 @@ class Handler:
 handler = Handler()
 handler.add_action(r"get link",lambda x:"get link")
 handler.add_action(r"get week",lambda x:"get week")
-handler.add_action(r"get json",lambda x:"get json")
 
 server = vk.get_long_poll_server()
 while True:

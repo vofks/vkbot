@@ -13,7 +13,7 @@ def read():
     with open('links.json', 'r') as rf:
         data = json.load(rf)
         rf.close()
-        return data        
+        return data      
             
 
 def check(newLinks):
@@ -23,8 +23,8 @@ def check(newLinks):
     except json.JSONDecodeError as err:
         print('ERROR (is json empty?) ' + str(err))
         write(newLinks)
-        return 0
-    diff = list(set(newLinks) - set(oldLinks)) #новые ссылки разность множеств
+        return newLinks
+    diff = list(set(newLinks) - set(oldLinks))
     if not diff:
         print('no difference')
         return 0

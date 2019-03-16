@@ -190,6 +190,11 @@ def get_beautiful_schedule_for_group(group,sub_group,is_up_week,schedule):
         for pair in range(len(schedule[day])):
             res += " %d : %s" %(pair+1,schedule[day][pair][is_up_week]) + "\n"
     return res
+	
+# def draw_schedule_for_group():
+	# is_up_week = int(not is_up_week)
+    # schedule = schedule[group][sub_group-1]
+    # res = ""
 
 def save(file,schedule):
     f = open(file,"wb")

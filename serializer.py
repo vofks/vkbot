@@ -1,21 +1,30 @@
 # -*- coding: utf-8 -*-
 
-import json
+import json, os
+
+fname = 'links.json'
+dname = '\\data\\'
+fpath = os.getcwd() + dname + fname
 
 def write(newLinks):
     print('serialize')
-    with open('links.json', 'w') as wf:
-        json.dump(newLinks, wf)
-        wf.close
+    with open(fpath, 'w') as f:
+        json.dump(newLinks, f)
+        f.close
 
 def read():
     print('deserialize')
-    with open('links.json', 'r') as rf:
-        data = json.load(rf)
-        rf.close()
-        return data      
-            
-
+    try:
+        with open(fpath, 'r') as f:
+            data = json.load(f)
+            f.close()
+            return data      
+    except (OSError, IOError):
+        print('I/O Error')
+        with open(fpath, 'w') as f:
+            f.close()
+            read()            
+                    
 def check(newLinks):
     print('check')
     try:
@@ -32,4 +41,5 @@ def check(newLinks):
         print('Difference: ' + str(diff))
         write(newLinks)
         return diff
+    
     
